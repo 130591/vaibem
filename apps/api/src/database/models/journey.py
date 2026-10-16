@@ -18,7 +18,7 @@ if TYPE_CHECKING:
   from apps.api.src.database.models.student import Student
 
 
-class JourneyModel(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+class Journey(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   __tablename__ = "journey"
 
   name: Mapped[str] = mapped_column(String(255), default="School Journey", nullable=False)
@@ -65,5 +65,6 @@ class JourneyModel(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   )
 
 
-# Alias para compatibilidade com SQLAlchemy relationships e repositories
-Journey = JourneyModel
+# Alias para compatibilidade com repositórios e serviços
+JourneyModel = Journey
+
