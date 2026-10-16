@@ -12,6 +12,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
   from apps.api.src.database.models.account import Account
   from apps.api.src.database.models.journey import Journey
+  from apps.api.src.database.models.routine import Routine
+
 
 
 class Student(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -30,4 +32,10 @@ class Student(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   journeys: Mapped[list[Journey]] = relationship(
     back_populates="student",
     cascade="all, delete-orphan",
+  )
+    
+  routine: Mapped[Routine | None] = relationship(
+    back_populates="student", 
+    uselist=False, 
+    cascade="all, delete-orphan"
   )
