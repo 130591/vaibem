@@ -24,8 +24,8 @@ class JourneyService:
 
     await self.event_publisher.publish(
         JourneyStarted(
-            journey_id=journey.id,
-            child_id=journey.child_id,
+          journey_id=journey.id,
+          child_id=journey.child_id,
         )
     )
 

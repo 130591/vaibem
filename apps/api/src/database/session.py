@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import (
 engine = create_async_engine(
   settings.database_url,
   echo=settings.database_echo,
+  connect_args={"server_settings": {"search_path": "vaibem,public"}},
 )
 
 
