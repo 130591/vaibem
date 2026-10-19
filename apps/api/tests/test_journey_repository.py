@@ -5,9 +5,6 @@ from uuid import uuid4
 import pytest
 from apps.api.src.database.exceptions import RecordNotFoundError
 from apps.api.src.database.models.journey import JourneyModel
-from apps.api.src.database.models.journey_status import (
-  JourneyStatus as JourneyStatusModel,
-)
 from apps.api.src.database.repositories.journey_repository import (
   JourneyRepository,
 )
@@ -23,18 +20,12 @@ async def test_journey_repository_get_success():
   student_id = uuid4()
   now = datetime.now(UTC)
 
-  status_model = JourneyStatusModel(
-    id=1,
-    status_lost_name="in_progress",
-    status_lost_message="Em andamento",
-  )
-
   model = JourneyModel(
     id=journey_id,
     student_id=student_id,
     left_home=now,
     arrived_time=None,
-    status=status_model,
+    status=JourneyStatus.IN_PROGRESS,
   )
 
   mock_session.get.return_value = model
@@ -47,6 +38,22 @@ async def test_journey_repository_get_success():
   assert journey.status == JourneyStatus.IN_PROGRESS
   assert journey.started_at == now
   mock_session.get.assert_awaited_once_with(JourneyModel, journey_id)
+
+
+@pytest.mark.asyncio
+async def test_journey_repository_get_invalid_status_raises():
+  mock_session = AsyncMock()
+  repo = JourneyRepository(mock_session)
+
+  model = JourneyModel(
+    id=uuid4(),
+    student_id=uuid4(),
+    status="status_corrompido_invalido",
+  )
+  mock_session.get.return_value = model
+
+  with pytest.raises(ValueError):
+    await repo.get(model.id)
 
 
 @pytest.mark.asyncio

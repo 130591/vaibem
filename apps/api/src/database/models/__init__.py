@@ -4,7 +4,6 @@ from apps.api.src.database.models.invitation import SchoolInvitation
 from apps.api.src.database.models.journey import Journey
 from apps.api.src.database.models.journey_event import JourneyEvent
 from apps.api.src.database.models.journey_location import JourneyLocation
-from apps.api.src.database.models.journey_status import JourneyStatus
 from apps.api.src.database.models.route import Route
 from apps.api.src.database.models.routine import Routine
 from apps.api.src.database.models.school import School
@@ -16,7 +15,6 @@ __all__ = [
   "Journey",
   "JourneyEvent",
   "JourneyLocation",
-  "JourneyStatus",
   "Route",
   "Routine",
   "School",

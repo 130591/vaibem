@@ -6,14 +6,15 @@ from typing import TYPE_CHECKING
 
 from apps.api.src.database.base import Base
 from apps.api.src.database.mixins import TimestampMixin, UUIDPrimaryKeyMixin
+from apps.api.src.domains.journey_status import JourneyStatus
 from sqlalchemy import DateTime, ForeignKey, Interval, String
+from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
   from apps.api.src.database.models.journey_event import JourneyEvent
   from apps.api.src.database.models.journey_location import JourneyLocation
-  from apps.api.src.database.models.journey_status import JourneyStatus
   from apps.api.src.database.models.route import Route
   from apps.api.src.database.models.student import Student
 
@@ -41,9 +42,10 @@ class Journey(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   )
 
   route_type: Mapped[str] = mapped_column(String(50), default="standard", nullable=False)
-  status_id: Mapped[int | None] = mapped_column(
-    ForeignKey("journey_status.id"),
-    nullable=True,
+  status: Mapped[JourneyStatus] = mapped_column(
+    SQLEnum(JourneyStatus, native_enum=False, length=30),
+    default=JourneyStatus.PLANNED,
+    nullable=False,
   )
   route_id: Mapped[uuid.UUID | None] = mapped_column(
     UUID(as_uuid=True),
@@ -53,7 +55,6 @@ class Journey(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
   student: Mapped[Student] = relationship(back_populates="journeys")
-  status: Mapped[JourneyStatus] = relationship(back_populates="journeys")
   route: Mapped[Route] = relationship(back_populates="journeys")
   events: Mapped[list[JourneyEvent]] = relationship(
     back_populates="journey",
