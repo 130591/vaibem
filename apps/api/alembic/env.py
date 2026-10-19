@@ -1,14 +1,14 @@
 import asyncio
 from logging.config import fileConfig
 
-from alembic import context
+import apps.api.src.database.models  # noqa: F401 - load all models for autogenerate
+from apps.api.src.config import settings
+from apps.api.src.database.base import Base
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-import apps.api.src.database.models  # noqa: F401 - load all models for autogenerate
-from apps.api.src.config import settings
-from apps.api.src.database.base import Base
+from alembic import context
 
 config = context.config
 
@@ -21,6 +21,13 @@ config.set_main_option("sqlalchemy.url", settings.database_url)
 target_metadata = Base.metadata
 
 
+def include_object(object, name, type_, reflected, compare_to):
+  if type_ == "table":
+    # Only manage tables within the vaibem schema
+    return getattr(object, "schema", None) == "vaibem"
+  return True
+
+
 def run_migrations_offline() -> None:
   url = config.get_main_option("sqlalchemy.url")
   context.configure(
@@ -28,6 +35,10 @@ def run_migrations_offline() -> None:
     target_metadata=target_metadata,
     literal_binds=True,
     dialect_opts={"paramstyle": "named"},
+    include_schemas=True,
+    default_schema="vaibem",
+    version_table_schema="vaibem",
+    include_object=include_object,
   )
 
   with context.begin_transaction():
@@ -35,7 +46,14 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-  context.configure(connection=connection, target_metadata=target_metadata)
+  context.configure(
+    connection=connection,
+    target_metadata=target_metadata,
+    include_schemas=True,
+    default_schema="vaibem",
+    version_table_schema="vaibem",
+    include_object=include_object,
+  )
 
   with context.begin_transaction():
     context.run_migrations()
@@ -46,6 +64,7 @@ async def run_async_migrations() -> None:
     config.get_section(config.config_ini_section, {}),
     prefix="sqlalchemy.",
     poolclass=pool.NullPool,
+    connect_args={"server_settings": {"search_path": "vaibem,public"}},
   )
 
   async with connectable.connect() as connection:
