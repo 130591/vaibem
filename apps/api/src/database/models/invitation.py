@@ -41,10 +41,15 @@ class SchoolInvitation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         Index("idx_invitations_school_student", "school_id", "student_id"),
     )
 
-    def is_valid(self, now: datetime | None = None) -> bool:
+    def is_expired(self, now: datetime | None = None) -> bool:
+        """Verifica estritamente se o prazo de validade expirou."""
         current_time = now or datetime.now(UTC)
-        return self.status == "pending" and self.expires_at > current_time
-
+        return current_time >= self.expires_at
+    
+    def is_valid(self, now: datetime | None = None) -> bool:
+        """Válido significa: status pendente E não expirado no tempo."""
+        return self.status == "pending" and not self.is_expired(now)
+    
     def mark_as_accepted(self, now: datetime | None = None) -> None:
         if not self.is_valid(now):
             raise ValueError("O convite expirou ou já foi utilizado.")

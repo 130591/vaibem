@@ -3,6 +3,10 @@ from __future__ import annotations
 from uuid import UUID
 
 import strawberry
+from apps.api.src.api.graphql.invite import (
+  SchoolInvitationDTO,
+  resolve_validate_school_invitation,
+)
 from strawberry.types import Info
 
 
@@ -44,3 +48,9 @@ class Query:
       name=profile.name,
       email=profile.email,
     )
+
+  @strawberry.field
+  async def validate_school_invitation(
+    self, info: Info, token: str
+  ) -> SchoolInvitationDTO:
+    return await resolve_validate_school_invitation(info, token)
