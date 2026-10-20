@@ -16,6 +16,7 @@ class JourneyAlreadyStartedException(DomainException):
     self.journey_id = journey_id
     super().__init__(f"Jornada {journey_id} já está em andamento.")
 
+
 class InvalidJourneyTransition(DomainException):
   """Levantado quando uma transição de estado da jornada é inválida."""
 
@@ -26,12 +27,16 @@ class InvalidJourneyTransition(DomainException):
 class InviteNotFoundException(DomainException):
   """Levantado quando o convite não é encontrado pelo token informado."""
 
+  code: str = "INVITATION_NOT_FOUND"
+
   def __init__(self, message: str = "Convite não encontrado."):
     super().__init__(message)
 
 
 class InvalidInviteError(DomainException):
   """Levantado para falhas na validação do convite (ex: expirado)."""
+
+  code: str = "INVITATION_EXPIRED"
 
   def __init__(self, message: str = "Este convite expirou."):
     super().__init__(message)
@@ -40,5 +45,7 @@ class InvalidInviteError(DomainException):
 class AlreadyUsedInviteError(DomainException):
   """Levantado quando o convite já foi aceito/utilizado."""
 
+  code: str = "INVITATION_ALREADY_USED"
+
   def __init__(self, message: str = "Este convite já foi utilizado."):
-    super().__init__(message)
+    super().__init__(message)

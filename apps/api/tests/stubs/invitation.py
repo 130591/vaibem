@@ -6,9 +6,12 @@ VALIDATE_INVITATION_QUERY = """
       status
       schoolName
       studentName
+      guardianEmail
     }
   }
 """
+
+
 async def execute_validate_invitation(client: httpx.AsyncClient, token: str) -> httpx.Response:
   return await client.post(
     "/graphql",
