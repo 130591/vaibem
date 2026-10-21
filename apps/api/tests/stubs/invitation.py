@@ -3,16 +3,33 @@ import httpx
 VALIDATE_INVITATION_QUERY = """
   query Validate($token: String!) {
     validateSchoolInvitation(token: $token) {
-      status
-      schoolName
-      studentName
-      guardianEmail
+      __typename
+      ... on SchoolInvitationDTO {
+        status
+        schoolName
+        studentName
+        guardianEmail
+      }
+      ... on InvitationNotFoundError {
+        message
+      }
+      ... on InvitationExpiredError {
+        message
+      }
+      ... on InvitationAlreadyUsedError {
+        message
+      }
+      ... on InvitationInvalidError {
+        message
+      }
     }
   }
 """
 
 
-async def execute_validate_invitation(client: httpx.AsyncClient, token: str) -> httpx.Response:
+async def execute_validate_invitation(
+  client: httpx.AsyncClient, token: str
+) -> httpx.Response:
   return await client.post(
     "/graphql",
     json={

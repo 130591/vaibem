@@ -3,8 +3,10 @@ from __future__ import annotations
 import hashlib
 from typing import TYPE_CHECKING
 
+from apps.api.src.constant import InviteStatus
 from apps.api.src.domains.exceptions import (
     AlreadyUsedInviteError,
+    InvalidExpiredError,
     InvalidInviteError,
     InviteNotFoundException,
 )
@@ -29,15 +31,15 @@ class InviteService:
         entity = await self.invite_repository.get_by_token_hash(token_hash)
 
         if not entity:
-            raise InviteNotFoundException("Convite não encontrado.")
+            raise InviteNotFoundException()
 
-        if entity.status == "accepted":
-            raise AlreadyUsedInviteError("Este convite já foi utilizado.")
+        if entity.status == InviteStatus.ACCEPTED:
+            raise AlreadyUsedInviteError()
 
         if entity.is_expired():
-            raise InvalidInviteError("Este convite expirou.")
+            raise InvalidExpiredError()
 
-        if entity.status != "pending":
+        if entity.status != InviteStatus.PENDING:
             raise InvalidInviteError(f"Convite inválido (status: {entity.status}).")
 
         return entity

@@ -33,12 +33,21 @@ class InviteNotFoundException(DomainException):
     super().__init__(message)
 
 
-class InvalidInviteError(DomainException):
-  """Levantado para falhas na validação do convite (ex: expirado)."""
+class InvalidExpiredError(DomainException):
+  """Levantado quando o convite expirou no tempo."""
 
   code: str = "INVITATION_EXPIRED"
 
   def __init__(self, message: str = "Este convite expirou."):
+    super().__init__(message)
+
+
+class InvalidInviteError(DomainException):
+  """Levantado para outras falhas na validação do convite."""
+
+  code: str = "INVITATION_INVALID"
+
+  def __init__(self, message: str = "Convite inválido."):
     super().__init__(message)
 
 
