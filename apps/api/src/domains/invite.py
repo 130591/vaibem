@@ -45,6 +45,9 @@ class Invite:
     current_time = now or datetime.now(UTC)
     return current_time >= self.expires_at
 
+  def is_used(self) -> bool:
+    return self.status == "accepted" or self.accepted_at is not None
+
   def accept(self, now: datetime) -> Invite:
     if self.status != "pending":
       raise AlreadyUsedInviteError()

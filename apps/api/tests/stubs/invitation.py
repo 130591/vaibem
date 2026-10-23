@@ -32,9 +32,24 @@ REGISTER_GUARDIAN_MUTATION = """
   mutation Register($input: RegisterGuardianInfo!) {
     registerGuardianFromInvitation(input: $input) {
       __typename
-      ... on RegisterGuardianDTO {
+      ... on AuthPayload {
         accessToken
         refreshToken
+      }
+      ... on InvitationNotFoundError {
+        message
+      }
+      ... on InvitationExpiredError {
+        message
+      }
+      ... on InvitationAlreadyUsedError {
+        message
+      }
+      ... on InvitationInvalidError {
+        message
+      }
+      ... on AccountAlreadyExistsError {
+        message
       }
     }
   }

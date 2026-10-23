@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import hashlib
-import secrets
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from apps.api.src.constant import InviteStatus
-from apps.api.src.database.models.guardian import Guardian
+from apps.api.src.database.models import Account, Guardian, GuardianStudent
 from apps.api.src.domains.exceptions import (
   AccountAlreadyExistsError,
   AlreadyUsedInviteError,
@@ -16,6 +15,7 @@ from apps.api.src.domains.exceptions import (
   InvalidInviteError,
   InviteNotFoundException,
 )
+from apps.api.src.security import create_access_token, create_refresh_token
 
 if TYPE_CHECKING:
   from apps.api.src.api.graphql.mutations.account import RegisterGuardianInfo
@@ -67,50 +67,63 @@ class ProfileService:
       raise RuntimeError("Repositórios não configurados no ProfileService.")
 
     token_hash = self.calculate_hash(register_guardian.token)
-    invitation = await self.invite_repository.get_by_token_hash(token_hash)
+    invite = await self.invite_repository.get_by_token_hash(token_hash)
 
-    if invitation is None:
+    if invite is None:
       raise InviteNotFoundException()
 
-    if invitation.status == InviteStatus.ACCEPTED or invitation.status == "accepted":
+    if invite.status == InviteStatus.ACCEPTED or invite.status == "accepted":
       raise AlreadyUsedInviteError()
 
-    if invitation.is_expired():
+    if invite.is_expired():
       raise InvalidExpiredError()
 
-    if invitation.status != InviteStatus.PENDING and invitation.status != "pending":
-      raise InvalidInviteError(f"Convite inválido (status: {invitation.status}).")
+    if invite.status != InviteStatus.PENDING and invite.status != "pending":
+      raise InvalidInviteError(f"Convite inválido (status: {invite.status}).")
 
-    existing_by_email = await self.profile_repository.find_guardian_by_email(
-      invitation.guardian_email
-    )
+    existing_by_email = await self.profile_repository.find_guardian_by_email(invite.guardian_email)
     if existing_by_email is not None:
-      raise AccountAlreadyExistsError()
+      raise AccountAlreadyExistsError("Responsável já possui conta cadastrada.")
 
     existing_by_phone = await self.profile_repository.find_guardian_by_phone(
       register_guardian.phone.strip()
     )
     if existing_by_phone is not None:
-      raise AccountAlreadyExistsError()
+      raise AccountAlreadyExistsError("Telefone já cadastrado.")
 
-    account_id = invitation.student.account_id
-    guardian = Guardian(
+    account = Account(
       id=uuid4(),
-      email=invitation.guardian_email,
-      name=register_guardian.name,
-      phone=register_guardian.phone.strip(),
-      account_id=account_id,
+      address="",
+      alarm_enabled=True,
     )
 
-    await self.profile_repository.save_guardian(guardian)
+    guardian = Guardian(
+      id=uuid4(),
+      account_id=account.id,
+      email=invite.guardian_email,
+      name=register_guardian.name,
+      phone=register_guardian.phone.strip(),
+    )
 
-    invitation.status = "accepted"
-    invitation.updated_at = datetime.now(UTC)
+    link = GuardianStudent(
+      id=uuid4(),
+      guardian_id=guardian.id,
+      student_id=invite.student_id,
+    )
+
+    invite.status = "accepted"
+    invite.updated_at = datetime.now(UTC)
 
     if self.session is not None:
+      self.session.add_all([account, guardian, link, invite])
       await self.session.commit()
 
-    access_token = secrets.token_urlsafe(32)
-    refresh_token = secrets.token_urlsafe(32)
+    access_token = create_access_token(
+      account_id=str(account.id),
+      guardian_id=str(guardian.id),
+    )
+    refresh_token = create_refresh_token(
+      account_id=str(account.id),
+    )
 
     return AuthTokens(access_token=access_token, refresh_token=refresh_token)

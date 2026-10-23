@@ -5,41 +5,40 @@ description = "School journey and student safety platform"
 requires-python = ">=3.12"
 
 dependencies = [
-	"fastapi",
-	"uvicorn[standard]",
-	"strawberry-graphql",
-	"sqlalchemy[asyncio]",
-	"greenlet",
-	"geoalchemy2",
-	"asyncpg",
-	"alembic",
-	"pydantic-settings",
-	"redis",
-	"boto3",
-	"structlog",
+  "fastapi",
+  "uvicorn[standard]",
+  "strawberry-graphql",
+  "sqlalchemy[asyncio]",
+  "greenlet",
+  "geoalchemy2",
+  "asyncpg",
+  "alembic",
+  "pydantic-settings",
+  "redis",
+  "boto3",
+  "structlog",
+  "pyjwt",
 ]
 
 [project.optional-dependencies]
 dev = [
-	"pytest",
-	"pytest-asyncio",
-	"httpx",
-	"ruff",
+  "pytest",
+  "pytest-asyncio",
+  "httpx",
+  "ruff",
 ]
 
 [dependency-groups]
 dev = [
-	"pytest",
-	"pytest-asyncio",
-	"httpx",
-	"ruff",
+  "pytest",
+  "pytest-asyncio",
+  "httpx",
+  "ruff",
 ]
-
 
 [tool.pytest.ini_options]
 pythonpath = ["src", "../.."]
 asyncio_mode = "auto"
-
 
 [tool.ruff]
 line-length = 100
