@@ -10,9 +10,7 @@ class Settings(BaseSettings):
 
   app_title: str = "VaiBem Platform - School Journey"
   app_version: str = "0.1.0"
-  database_url: str = (
-    "postgresql+asyncpg://postgres:postgres@localhost:5432/vaibem"
-  )
+  database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/vaibem"
   database_echo: bool = False
 
 

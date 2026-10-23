@@ -28,18 +28,10 @@ class Journey(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     ForeignKey("student.id", ondelete="CASCADE"),
     nullable=False,
   )
-  left_home: Mapped[datetime | None] = mapped_column(
-    DateTime(timezone=True), nullable=True
-  )
-  time_duration: Mapped[timedelta | None] = mapped_column(
-    Interval, nullable=True
-  )
-  arrived_time: Mapped[datetime | None] = mapped_column(
-    DateTime(timezone=True), nullable=True
-  )
-  last_time_updated: Mapped[datetime | None] = mapped_column(
-    DateTime(timezone=True), nullable=True
-  )
+  left_home: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+  time_duration: Mapped[timedelta | None] = mapped_column(Interval, nullable=True)
+  arrived_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+  last_time_updated: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
   route_type: Mapped[str] = mapped_column(String(50), default="standard", nullable=False)
   status: Mapped[JourneyStatus] = mapped_column(
@@ -52,7 +44,6 @@ class Journey(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     ForeignKey("route.id"),
     nullable=True,
   )
-
 
   student: Mapped[Student] = relationship(back_populates="journeys")
   route: Mapped[Route] = relationship(back_populates="journeys")
@@ -68,4 +59,3 @@ class Journey(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 # Alias para compatibilidade com repositórios e serviços
 JourneyModel = Journey
-

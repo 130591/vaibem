@@ -23,12 +23,8 @@ class JourneyLocation(UUIDPrimaryKeyMixin, Base):
     ForeignKey("journey.id", ondelete="CASCADE"),
     nullable=False,
   )
-  timestamp: Mapped[datetime] = mapped_column(
-    DateTime(timezone=True), nullable=False
-  )
-  point: Mapped[str] = mapped_column(
-    Geometry("POINT", srid=4326), nullable=False
-  )
+  timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+  point: Mapped[str] = mapped_column(Geometry("POINT", srid=4326), nullable=False)
   accuracy: Mapped[float | None] = mapped_column(Numeric, nullable=True)
 
   journey: Mapped[Journey] = relationship(back_populates="locations")

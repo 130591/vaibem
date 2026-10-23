@@ -23,15 +23,11 @@ class Mutation:
     self.journey_service = journey_service
 
   @strawberry.mutation
-  async def start_journey(
-    self, info: Info, journey_id: strawberry.ID
-  ) -> StartJourneyResult:
+  async def start_journey(self, info: Info, journey_id: strawberry.ID) -> StartJourneyResult:
     service = self.journey_service
     if service is None and info is not None:
       context = info.context or {}
-      service = (
-        context.get("journey_service") if isinstance(context, dict) else None
-      )
+      service = context.get("journey_service") if isinstance(context, dict) else None
 
     if service is None:
       raise GraphQLError("JourneyService não configurado no contexto.")

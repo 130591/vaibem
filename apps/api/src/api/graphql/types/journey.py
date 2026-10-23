@@ -18,11 +18,11 @@ class JourneyDTO:
   @classmethod
   def from_domain(cls, journey: Journey) -> JourneyDTO:
     return cls(
-        id=strawberry.ID(str(journey.id)),
-        child_id=strawberry.ID(str(journey.child_id)),
-        status=journey.status.value,
-        started_at=journey.started_at,
-        arrived_at=journey.arrived_at,
+      id=strawberry.ID(str(journey.id)),
+      child_id=strawberry.ID(str(journey.child_id)),
+      status=journey.status.value,
+      started_at=journey.started_at,
+      arrived_at=journey.arrived_at,
     )
 
 
@@ -42,6 +42,6 @@ class JourneyAlreadyStartedError:
 
 # Union de retorno da operação
 StartJourneyResult = Annotated[
-    JourneyDTO | JourneyNotFoundError | JourneyAlreadyStartedError,
-    strawberry.union("StartJourneyResult"),
+  JourneyDTO | JourneyNotFoundError | JourneyAlreadyStartedError,
+  strawberry.union("StartJourneyResult"),
 ]

@@ -14,15 +14,9 @@ if TYPE_CHECKING:
 class Route(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   __tablename__ = "route"
 
-  origin_point: Mapped[str] = mapped_column(
-    Geometry("POINT", srid=4326), nullable=False
-  )
-  destination_point: Mapped[str] = mapped_column(
-    Geometry("POINT", srid=4326), nullable=False
-  )
+  origin_point: Mapped[str] = mapped_column(Geometry("POINT", srid=4326), nullable=False)
+  destination_point: Mapped[str] = mapped_column(Geometry("POINT", srid=4326), nullable=False)
   # Traçado completo da rota.
-  geometry: Mapped[str | None] = mapped_column(
-    Geometry("LINESTRING", srid=4326), nullable=True
-  )
+  geometry: Mapped[str | None] = mapped_column(Geometry("LINESTRING", srid=4326), nullable=True)
 
   journeys: Mapped[list[Journey]] = relationship(back_populates="route")

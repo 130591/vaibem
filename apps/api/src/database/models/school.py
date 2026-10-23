@@ -18,9 +18,7 @@ class School(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   __tablename__ = "school"
 
   name: Mapped[str] = mapped_column(String(255), nullable=False)
-  geofence: Mapped[str | None] = mapped_column(
-    Geography("POLYGON", srid=4326), nullable=True
-  )
+  geofence: Mapped[str | None] = mapped_column(Geography("POLYGON", srid=4326), nullable=True)
   account_id: Mapped[uuid.UUID] = mapped_column(
     UUID(as_uuid=True),
     ForeignKey("account.id", ondelete="CASCADE"),

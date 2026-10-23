@@ -41,9 +41,7 @@ def test_start_journey_already_started_raises_exception():
   with pytest.raises(InvalidJourneyTransition) as exc_info:
     journey.start()
 
-  assert "Não é possível iniciar uma jornada no estado in_progress" in str(
-    exc_info.value
-  )
+  assert "Não é possível iniciar uma jornada no estado in_progress" in str(exc_info.value)
 
 
 def test_arrive_at_school_success():

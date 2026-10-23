@@ -6,9 +6,7 @@ from apps.api.src.main import app
 @pytest.mark.asyncio
 async def test_health_check_endpoint():
   transport = httpx.ASGITransport(app=app)
-  async with httpx.AsyncClient(
-    transport=transport, base_url="http://test"
-  ) as client:
+  async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
     response = await client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
@@ -17,9 +15,7 @@ async def test_health_check_endpoint():
 @pytest.mark.asyncio
 async def test_root_endpoint():
   transport = httpx.ASGITransport(app=app)
-  async with httpx.AsyncClient(
-    transport=transport, base_url="http://test"
-  ) as client:
+  async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
     response = await client.get("/")
     assert response.status_code == 200
     data = response.json()
@@ -30,9 +26,7 @@ async def test_root_endpoint():
 @pytest.mark.asyncio
 async def test_graphql_health_query():
   transport = httpx.ASGITransport(app=app)
-  async with httpx.AsyncClient(
-    transport=transport, base_url="http://test"
-  ) as client:
+  async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
     response = await client.post(
       "/graphql",
       json={"query": "{ health }"},
