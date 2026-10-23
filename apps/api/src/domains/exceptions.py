@@ -58,3 +58,12 @@ class AlreadyUsedInviteError(DomainException):
 
   def __init__(self, message: str = "Este convite já foi utilizado."):
     super().__init__(message)
+
+
+class AccountAlreadyExistsError(DomainException):
+  """Levantado quando o responsável já possui conta/cadastro."""
+
+  code: str = "ACCOUNT_EXISTS"
+
+  def __init__(self, message: str = "Responsável já possui conta cadastrada."):
+    super().__init__(message)

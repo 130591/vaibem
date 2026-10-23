@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import httpx
 
 VALIDATE_INVITATION_QUERY = """
@@ -26,14 +28,34 @@ VALIDATE_INVITATION_QUERY = """
   }
 """
 
+REGISTER_GUARDIAN_MUTATION = """
+  mutation Register($input: RegisterGuardianInfo!) {
+    registerGuardianFromInvitation(input: $input) {
+      __typename
+      ... on RegisterGuardianDTO {
+        accessToken
+        refreshToken
+      }
+    }
+  }
+"""
 
-async def execute_validate_invitation(
-  client: httpx.AsyncClient, token: str
-) -> httpx.Response:
+
+async def execute_validate_invitation(client: httpx.AsyncClient, token: str) -> httpx.Response:
   return await client.post(
     "/graphql",
     json={
       "query": VALIDATE_INVITATION_QUERY,
       "variables": {"token": token},
+    },
+  )
+
+
+async def execute_activation_account(client: httpx.AsyncClient, input_data: dict) -> httpx.Response:
+  return await client.post(
+    "/graphql",
+    json={
+      "query": REGISTER_GUARDIAN_MUTATION,
+      "variables": {"input": input_data},
     },
   )

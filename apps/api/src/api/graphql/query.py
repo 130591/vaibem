@@ -21,13 +21,9 @@ class Query(InviteQuery):
     return "ok"
 
   @strawberry.field
-  async def profile(
-    self, info: Info, guardian_id: strawberry.ID
-  ) -> ProfileDTO | None:
+  async def profile(self, info: Info, guardian_id: strawberry.ID) -> ProfileDTO | None:
     context = info.context or {}
-    profile_service = (
-      context.get("profile_service") if isinstance(context, dict) else None
-    )
+    profile_service = context.get("profile_service") if isinstance(context, dict) else None
     if not profile_service:
       return None
 

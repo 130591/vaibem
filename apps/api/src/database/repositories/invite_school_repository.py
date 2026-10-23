@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from apps.api.src.database.models.invitation import SchoolInvitation
 from apps.api.src.database.repositories.base_repository import BaseRepository
 from sqlalchemy import select
@@ -11,6 +13,20 @@ class InviteSchoolRepository(BaseRepository[SchoolInvitation, SchoolInvitation])
   def _to_domain(self, model: SchoolInvitation) -> SchoolInvitation:
     return model
 
+  async def find_by_email(self, email: str) -> SchoolInvitation | None:
+    async with self._translate_db_errors():
+      stmt = (
+        select(SchoolInvitation)
+        .options(
+          joinedload(SchoolInvitation.school),
+          joinedload(SchoolInvitation.student),
+        )
+        .where(SchoolInvitation.guardian_email == email)
+      )
+      result = await self.session.execute(stmt)
+      model = result.scalar_one_or_none()
+      return self._to_domain(model) if model is not None else None
+
   async def get_by_token_hash(self, token_hash: str) -> SchoolInvitation | None:
     async with self._translate_db_errors():
       stmt = (
@@ -23,4 +39,4 @@ class InviteSchoolRepository(BaseRepository[SchoolInvitation, SchoolInvitation])
       )
       result = await self.session.execute(stmt)
       model = result.scalar_one_or_none()
-      return self._to_domain(model) if model is not None else None
+      return self._to_domain(model) if model is not None else None

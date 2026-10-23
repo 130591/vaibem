@@ -24,9 +24,7 @@ from graphql import GraphQLError
 from strawberry.types import Info
 
 
-async def _execute_validation(
-  service: InviteService, clean_token: str
-) -> ValidateInvitationResult:
+async def _execute_validation(service: InviteService, clean_token: str) -> ValidateInvitationResult:
   try:
     entity = await service.validate(clean_token)
     return SchoolInvitationDTO.from_domain(entity)
@@ -50,15 +48,11 @@ class InviteQuery:
     self.invite_service = invite_service
 
   @strawberry.field
-  async def validate_school_invitation(
-    self, info: Info, token: str
-  ) -> ValidateInvitationResult:
+  async def validate_school_invitation(self, info: Info, token: str) -> ValidateInvitationResult:
     service = getattr(self, "invite_service", None)
     if service is None and info is not None:
       context = info.context or {}
-      service = (
-        context.get("invite_service") if isinstance(context, dict) else None
-      )
+      service = context.get("invite_service") if isinstance(context, dict) else None
 
     if not isinstance(token, str):
       raise GraphQLError(
