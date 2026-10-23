@@ -11,6 +11,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
   from apps.api.src.database.models.account import Account
+  from apps.api.src.database.models.guardian_student import GuardianStudent
+  from apps.api.src.database.models.student import Student
 
 
 class Guardian(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -26,3 +28,13 @@ class Guardian(UUIDPrimaryKeyMixin, TimestampMixin, Base):
   )
 
   account: Mapped[Account] = relationship(back_populates="guardians")
+  students: Mapped[list[Student]] = relationship(
+    secondary="guardian_student",
+    back_populates="guardians",
+    overlaps="guardian_students,guardians,student,students",
+  )
+  guardian_students: Mapped[list[GuardianStudent]] = relationship(
+    back_populates="guardian",
+    cascade="all, delete-orphan",
+    overlaps="students",
+  )
