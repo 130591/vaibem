@@ -1,5 +1,6 @@
 from apps.api.src.database.models.account import Account
 from apps.api.src.database.models.guardian import Guardian
+from apps.api.src.database.models.guardian_device import GuardianDevice
 from apps.api.src.database.models.guardian_student import GuardianStudent
 from apps.api.src.database.models.invitation import SchoolInvitation
 from apps.api.src.database.models.journey import Journey
@@ -13,6 +14,7 @@ from apps.api.src.database.models.student import Student
 __all__ = [
   "Account",
   "Guardian",
+  "GuardianDevice",
   "GuardianStudent",
   "Journey",
   "JourneyEvent",

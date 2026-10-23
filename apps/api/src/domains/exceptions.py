@@ -85,3 +85,21 @@ class InvalidScheduleException(DomainException):
 
   def __init__(self, message: str = "Horário de rotina inválido."):
     super().__init__(message)
+
+
+class GuardianNotFoundException(DomainException):
+  """Levantado quando o responsável não é encontrado."""
+
+  code: str = "GUARDIAN_NOT_FOUND"
+
+  def __init__(self, message: str = "Responsável não encontrado."):
+    super().__init__(message)
+
+
+class InvalidDeviceTokenException(DomainException):
+  """Levantado quando o token de dispositivo ou plataforma é inválido."""
+
+  code: str = "INVALID_DEVICE_TOKEN"
+
+  def __init__(self, message: str = "Token de dispositivo ou plataforma inválido."):
+    super().__init__(message)

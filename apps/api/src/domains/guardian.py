@@ -11,6 +11,7 @@ class Guardian:
   email: str
   name: str
   phone: str
+  notifications_enabled: bool = False
 
   @classmethod
   def create(
@@ -20,6 +21,7 @@ class Guardian:
     email: str = "",
     full_name: str,
     phone: str,
+    notifications_enabled: bool = False,
   ) -> Guardian:
     name = full_name.strip()
     normalized_phone = phone.strip()
@@ -36,4 +38,11 @@ class Guardian:
       email=email,
       name=name,
       phone=normalized_phone,
+      notifications_enabled=notifications_enabled,
     )
+
+  def enable_notifications(self) -> None:
+    self.notifications_enabled = True
+
+  def disable_notifications(self) -> None:
+    self.notifications_enabled = False

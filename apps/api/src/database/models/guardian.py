@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING
 
 from apps.api.src.database.base import Base
 from apps.api.src.database.mixins import TimestampMixin, UUIDPrimaryKeyMixin
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import Boolean, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
   from apps.api.src.database.models.account import Account
+  from apps.api.src.database.models.guardian_device import GuardianDevice
   from apps.api.src.database.models.guardian_student import GuardianStudent
   from apps.api.src.database.models.student import Student
 
@@ -26,6 +27,11 @@ class Guardian(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     ForeignKey("account.id", ondelete="CASCADE"),
     nullable=False,
   )
+  notifications_enabled: Mapped[bool] = mapped_column(
+    Boolean,
+    default=False,
+    nullable=False,
+  )
 
   account: Mapped[Account] = relationship(back_populates="guardians")
   students: Mapped[list[Student]] = relationship(
@@ -37,4 +43,8 @@ class Guardian(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     back_populates="guardian",
     cascade="all, delete-orphan",
     overlaps="students",
+  )
+  devices: Mapped[list[GuardianDevice]] = relationship(
+    back_populates="guardian",
+    cascade="all, delete-orphan",
   )
