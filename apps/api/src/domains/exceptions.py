@@ -67,3 +67,21 @@ class AccountAlreadyExistsError(DomainException):
 
   def __init__(self, message: str = "Responsável já possui conta cadastrada."):
     super().__init__(message)
+
+
+class StudentNotFoundException(DomainException):
+  """Levantado quando o aluno não é encontrado pelo ID."""
+
+  code: str = "STUDENT_NOT_FOUND"
+
+  def __init__(self, message: str = "Aluno não encontrado."):
+    super().__init__(message)
+
+
+class InvalidScheduleException(DomainException):
+  """Levantado quando os horários informados para a rotina são inválidos."""
+
+  code: str = "INVALID_SCHEDULE"
+
+  def __init__(self, message: str = "Horário de rotina inválido."):
+    super().__init__(message)

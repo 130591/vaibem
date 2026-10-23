@@ -1,3 +1,14 @@
-from apps.api.src.api.graphql.mutations.journey import Mutation
+from __future__ import annotations
+
+import strawberry
+from apps.api.src.api.graphql.mutations.account import RegisterGuardianMutation
+from apps.api.src.api.graphql.mutations.journey import Mutation as JourneyMutation
+from apps.api.src.api.graphql.mutations.student import StudentMutation
+
+
+@strawberry.type
+class Mutation(JourneyMutation, RegisterGuardianMutation, StudentMutation):
+  pass
+
 
 __all__ = ["Mutation"]
